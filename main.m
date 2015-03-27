@@ -27,30 +27,32 @@ end
 %     imshow(imgSet{1,i});
 % end
 
-%align
+% align
 [ imgSet_aligned ] = MTBalign( imgSet, imgNum, levelNum, ignoreThreshold );
-% test yes align
 imgSet = imgSet_aligned;
-for i=1:9
-    figure(i);
-    imshow(imgSet{1,i});
-end
+imgHeight = size(imgSet{1,1},1);
+imgWidth = size(imgSet{1,1},2);
+% %test yes align
+% for i=1:9
+%     figure(i);
+%     imshow(imgSet{1,i});
+% end
 %% HDR
 imgR = [];
 imgG = [];
 imgB = [];
 for i=1:imgNum
-    imgR = [imgR reshape(imgSet{1,i}(:,:,1), size(imgSet{1,i}(:,:,1),1)*size(imgSet{1,i}(:,:,1),2), 1)];
-    imgG = [imgG reshape(imgSet{1,i}(:,:,2), size(imgSet{1,i}(:,:,2),1)*size(imgSet{1,i}(:,:,2),2), 1)];
-    imgB = [imgB reshape(imgSet{1,i}(:,:,3), size(imgSet{1,i}(:,:,3),1)*size(imgSet{1,i}(:,:,3),2), 1)];
+    imgR = [imgR reshape(imgSet{1,i}(:,:,1), imgHeight*imgWidth, 1)];
+    imgG = [imgG reshape(imgSet{1,i}(:,:,2), imgHeight*imgWidth, 1)];
+    imgB = [imgB reshape(imgSet{1,i}(:,:,3), imgHeight*imgWidth, 1)];
 end
 sampleIndex = randomchoose(1:size(imgR,1),sampleNum);
-ZR = imgR(sampleIndex,:);
-ZG = imgG(sampleIndex,:);
-ZB = imgB(sampleIndex,:);
+Z_R = imgR(sampleIndex,:);
+Z_G = imgG(sampleIndex,:);
+Z_B = imgB(sampleIndex,:);
 deltaT = ones(sampleNum,imgNum);
 for i=1:imgNum
-    deltaT(:,i) = deltaT(:,i)*log10(shutterTime(1,i));
+    deltaT(:,i) = deltaT(:,i)*log(shutterTime(1,i));
 end
 W = zeros(1,256);
 for i=2:256
@@ -62,7 +64,14 @@ for i=2:256
         W(1,i) = W(1,i-1)-1;
     end
 end
-[gR,lE_R]=gsolve(ZR,deltaT,lambda,W);
-[gG,lE_G]=gsolve(ZG,deltaT,lambda,W);
-[gB,lE_B]=gsolve(ZB,deltaT,lambda,W);
-plot(gR,1:256);
+[g_R,lE_R]=gsolve(Z_R,deltaT,lambda,W);
+[g_G,lE_G]=gsolve(Z_G,deltaT,lambda,W);
+[g_B,lE_B]=gsolve(Z_B,deltaT,lambda,W);
+% plot(g_R,1:256);
+[ HDR_R ] = constructHDR( imgR, deltaT, W, g_R );
+[ HDR_G ] = constructHDR( imgG, deltaT, W, g_G );
+[ HDR_B ] = constructHDR( imgB, deltaT, W, g_B );
+HDR = zeros(imgHeight,imgWidth,3);
+HDR(:,:,1) = reshape(HDR_R,imgHeight,imgWidth);
+HDR(:,:,2) = reshape(HDR_G,imgHeight,imgWidth);
+HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
