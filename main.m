@@ -5,9 +5,9 @@ imgNum = 9;
 levelNum = 5;
 ignoreThreshold = 5;
 % HDR
-sampleNum = 60;
-longestShutter = 1;
-lambda = 10;
+sampleNum = 100;
+shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60];
+lambda = 20;
 
 %% alignment
 imgSet = cell(1,imgNum);
@@ -15,39 +15,25 @@ for i=1:imgNum
     imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\¤j¥|¤U\DVE\hw1\testimages\exposures\img0' num2str(i) '.jpg']);
 end
 % imgSet 768x1024x3
-% misalign
-    shift = 7;
-    misalignImg = zeros(768,1024,3);
-    misalignImg(1+shift:768,1+shift:1024,:) = imgSet{1,2}(1:768-shift,1:1024-shift,:);
-    imgSet{1,2} = misalignImg;
-%test no align
-imgY = [];
-imgU = [];
-imgV = [];
-for i=1:imgNum
-    imgY = [imgY reshape(0.299*imgSet{1,i}(:,:,1)+0.587*imgSet{1,i}(:,:,2)+0.144*imgSet{1,i}(:,:,3), size(imgSet{1,i}(:,:,1),1)*size(imgSet{1,i}(:,:,1),2), 1)];
-    imgU = [imgU reshape(-0.169*imgSet{1,i}(:,:,1)-0.331*imgSet{1,i}(:,:,2)+0.5*imgSet{1,i}(:,:,3)+128, size(imgSet{1,i}(:,:,1),1)*size(imgSet{1,i}(:,:,1),2), 1)];
-    imgV = [imgV reshape(0.5*imgSet{1,i}(:,:,1)-0.419*imgSet{1,i}(:,:,2)-0.081*imgSet{1,i}(:,:,3)+128, size(imgSet{1,i}(:,:,1),1)*size(imgSet{1,i}(:,:,1),2), 1)];
-end
-for i=1:9
-    figure(i);
-    imshow(reshape(imgY(:,i),size(imgSet{1,i},1),size(imgSet{1,i},2)));
-end
+
+% % misalign
+%     shift = 7;
+%     misalignImg = zeros(768,1024,3);
+%     misalignImg(1+shift:768,1+shift:1024,:) = imgSet{1,2}(1:768-shift,1:1024-shift,:);
+%     imgSet{1,2} = misalignImg;
+% %test no align
+% for i=1:9
+%     figure(i);
+%     imshow(imgSet{1,i});
+% end
+
 %align
 [ imgSet_aligned ] = MTBalign( imgSet, imgNum, levelNum, ignoreThreshold );
 % test yes align
 imgSet = imgSet_aligned;
-imgY = [];
-imgU = [];
-imgV = [];
-for i=1:imgNum
-    imgY = [imgY reshape(0.299*imgSet{1,i}(:,:,1)+0.587*imgSet{1,i}(:,:,2)+0.144*imgSet{1,i}(:,:,3), size(imgSet{1,i}(:,:,1),1)*size(imgSet{1,i}(:,:,1),2), 1)];
-    imgU = [imgU reshape(-0.169*imgSet{1,i}(:,:,1)-0.331*imgSet{1,i}(:,:,2)+0.5*imgSet{1,i}(:,:,3)+128, size(imgSet{1,i}(:,:,1),1)*size(imgSet{1,i}(:,:,1),2), 1)];
-    imgV = [imgV reshape(0.5*imgSet{1,i}(:,:,1)-0.419*imgSet{1,i}(:,:,2)-0.081*imgSet{1,i}(:,:,3)+128, size(imgSet{1,i}(:,:,1),1)*size(imgSet{1,i}(:,:,1),2), 1)];
-end
 for i=1:9
     figure(i);
-    imshow(reshape(imgY(:,i),size(imgSet{1,i},1),size(imgSet{1,i},2)));
+    imshow(imgSet{1,i});
 end
 %% HDR
 imgR = [];
@@ -62,11 +48,9 @@ sampleIndex = randomchoose(1:size(imgR,1),sampleNum);
 ZR = imgR(sampleIndex,:);
 ZG = imgG(sampleIndex,:);
 ZB = imgB(sampleIndex,:);
-shutterSet = [];
-shutter = longestShutter*ones(size(imgR,1),1);
+deltaT = ones(sampleNum,imgNum);
 for i=1:imgNum
-    shutterSet = [shutterSet log10(shutter)];
-    shutter = shutter/2;
+    deltaT(:,i) = deltaT(:,i)*log10(shutterTime(1,i));
 end
 W = zeros(1,256);
 for i=2:256
@@ -78,7 +62,7 @@ for i=2:256
         W(1,i) = W(1,i-1)-1;
     end
 end
-[gR,lE_R]=gsolve(ZR,shutterSet,lambda,W);
-[gG,lE_G]=gsolve(ZG,shutterSet,lambda,W);
-[gB,lE_B]=gsolve(ZB,shutterSet,lambda,W);
-plot(1:256,gR);
+[gR,lE_R]=gsolve(ZR,deltaT,lambda,W);
+[gG,lE_G]=gsolve(ZG,deltaT,lambda,W);
+[gB,lE_B]=gsolve(ZB,deltaT,lambda,W);
+plot(gR,1:256);
