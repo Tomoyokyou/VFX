@@ -68,6 +68,8 @@ end
 [g_G,lE_G]=gsolve(Z_G,deltaT,lambda,W);
 [g_B,lE_B]=gsolve(Z_B,deltaT,lambda,W);
 % plot(g_R,1:256);
+% plot(g_G,1:256);
+% plot(g_B,1:256);
 [ HDR_R ] = constructHDR( imgR, deltaT, W, g_R );
 [ HDR_G ] = constructHDR( imgG, deltaT, W, g_G );
 [ HDR_B ] = constructHDR( imgB, deltaT, W, g_B );
