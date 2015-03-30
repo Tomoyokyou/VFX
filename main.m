@@ -77,3 +77,5 @@ HDR = zeros(imgHeight,imgWidth,3);
 HDR(:,:,1) = reshape(HDR_R,imgHeight,imgWidth);
 HDR(:,:,2) = reshape(HDR_G,imgHeight,imgWidth);
 HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
+RGB = tonemap(HDR);
+imshow(RGB);
