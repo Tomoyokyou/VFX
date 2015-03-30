@@ -1,18 +1,22 @@
 clear all;
 %% parameter
-imgNum = 9;
+imgNum = 13;
 % alignment
-levelNum = 5;
+levelNum = 2;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
-shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60];
+shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
 lambda = 20;
 
 %% alignment
 imgSet = cell(1,imgNum);
 for i=1:imgNum
-    imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\exposures\img0' num2str(i) '.jpg']);
+    if i<=9
+        imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\exposures\img0' num2str(i) '.jpg']);
+    else
+        imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\exposures\img' num2str(i) '.jpg']);
+    end
 end
 % imgSet 768x1024x3
 

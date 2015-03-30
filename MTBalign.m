@@ -1,5 +1,9 @@
 function [ imgSet_aligned ] = MTBalign( imgSet, imgNum, levelNum, ignoreThreshold )
 % imgSet 768x1024x3
+if levelNum==0
+    imgSet_aligned = imgSet;
+    return;
+end
 imgY = [];
 imgMTB = [];
 imgMTB_mask = [];
@@ -27,4 +31,5 @@ imgSet_aligned = cell(1,imgNum);
 for i=1:imgNum
     imgSet_aligned{1,i} = imgSet{1,i}(cropCoordinate(1,i):cropCoordinate(2,i),cropCoordinate(3,i):cropCoordinate(4,i),:);
 end
+
 
