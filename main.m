@@ -12,7 +12,7 @@ lambda = 20;
 %% alignment
 imgSet = cell(1,imgNum);
 for i=1:imgNum
-    imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\exposures\img0' num2str(i) '.jpg']);
+    imgSet{1,i} = imread(['C:\Users\Toshiba\Documents\NTUEE\四下\VFX\HW1\exposures\img0' num2str(i) '.jpg']);
 end
 % imgSet 768x1024x3
 
