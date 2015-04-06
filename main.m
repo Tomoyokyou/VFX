@@ -1,23 +1,20 @@
 clear all;
 %% parameter
-imgNum = 13;
+imgNum = 14;
 % alignment
-levelNum = 2;
+levelNum = 0;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
-shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
+shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
 lambda = 20;
 
 %% alignment
 imgSet = cell(1,imgNum);
 for i=1:imgNum
 
-    if i<=9
-        imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\exposures\img0' num2str(i) '.jpg']);
-    else
-        imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\exposures\img' num2str(i) '.jpg']);
-    end
+        imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\Dahu\data_set_6\DSC04' num2str(i+771) '.jpg']);
+        imgSet{1,i} = imresize(imgSet{1,i},0.2);
 
 end
 % imgSet 768x1024x3
@@ -28,7 +25,7 @@ end
 %     misalignImg(1+shift:768,1+shift:1024,:) = imgSet{1,2}(1:768-shift,1:1024-shift,:);
 %     imgSet{1,2} = misalignImg;
 % %test no align
-% for i=1:9
+% for i=1:12
 %     figure(i);
 %     imshow(imgSet{1,i});
 % end
@@ -85,3 +82,4 @@ HDR(:,:,2) = reshape(HDR_G,imgHeight,imgWidth);
 HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
 RGB = tonemap(HDR);
 imshow(RGB);
+imwrite(RGB,'hdr.jpg');
