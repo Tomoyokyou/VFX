@@ -92,6 +92,19 @@ a = 0.54;
 phi = 8;
 episilon = 1;
 
+for i = 1:size(HDR,1)
+	for j = 1:size(HDR,2)
+		if isnan(HDR(i,j,1))
+			HDR(i,j,1)=0;
+		end
+		if isnan(HDR(i,j,2))
+			HDR(i,j,2)=0;
+		end
+		if isnan(HDR(i,j,3))
+			HDR(i,j,3)=0;
+		end
+	end
+end
 	
 Lw = 0.2126.*HDR(:,:,1)+0.7152.*HDR(:,:,2)+0.0722.*HDR(:,:,3);
 	%Log-average luminance
@@ -111,7 +124,7 @@ L = Lw*a./LwBar;
 	standard = [];
 	init = 1;
 	for i = 1:15
-		init= init*1.6;
+		init= init*1.2;
 		standard =[standard, init];
 	end
 	
@@ -120,7 +133,7 @@ level = size(standard,2);
 V = {};
 for s=1:level
     %H = fspecial('gaussian',31,s-1+eps);
-	H = fspecial('gaussian',31,standard(s));
+	H = fspecial('gaussian',50,standard(s));
 %	H = fspecial('gaussian',max(size(L,1), size(L,2)),standard(s));
     V{s}= imfilter(L,H,'symmetric');
 end
