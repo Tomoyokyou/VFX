@@ -6,11 +6,16 @@ levelNum = 2;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
-shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
-lambda = 20;
+%shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
+shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
 
-%% alignment
-imgSet = cell(1,imgNum);
+lambda = 20;
+path = 'C:\Users\Toshiba\Pictures\Dahu\data_set_1\';
+
+%%Load Image
+
+imgSet = dir([path '*.jpg']);
+%imgSet = cell(1,imgNum);
 for i=1:imgNum
 
     if i<=9
@@ -20,6 +25,8 @@ for i=1:imgNum
     end
 
 end
+%% alignment
+
 % imgSet 768x1024x3
 
 % % misalign
