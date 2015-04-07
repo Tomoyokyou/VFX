@@ -6,6 +6,7 @@ levelNum = 2;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
+
 shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
 lambda = 200;
 
@@ -13,6 +14,7 @@ path = 'C:\Users\Lifeislikeamelody\Pictures\Dahu\data_set_1';
 list = dir([path '\*.JPG']);
 imgNum = size(list,1);
 imgSet = cell(1,imgNum);
+
 
 for i=1:imgNum
 
@@ -22,7 +24,10 @@ for i=1:imgNum
 end
 %% alignment
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 872635aed890fefe94b6a5a16de22eee2f2597ea
 % imgSet 768x1024x3
 
 % % misalign

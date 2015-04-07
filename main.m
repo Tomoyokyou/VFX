@@ -1,19 +1,19 @@
 clear all;
 %% parameter
-imgNum = 14;
+imgNum = 12;
 % alignment
-levelNum = 0;
-ignoreThreshold = 5;
+levelNum = 3;
+ignoreThreshold = 20;
 % HDR
 sampleNum = 100;
-shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
+shutterTime = [1/3200 1/1600 1/800 1/400 1/200 1/100 1/50 1/25 1/15 1/13 1/8 1/5];
 lambda = 200;
 
 %% alignment
 imgSet = cell(1,imgNum);
 for i=1:imgNum
 
-        imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\Dahu\data_set_6\DSC04' num2str(i+771) '.jpg']);
+        imgSet{1,i} = imread(['C:\Users\acer\Documents\NTUEE\大四下\DVE\hw1\testimages\Dahu\data_set_2\DSC04' num2str(i+694) '.jpg']);
         imgSet{1,i} = imresize(imgSet{1,i},0.2);
 
 end
@@ -73,9 +73,9 @@ end
 % plot(g_R,1:256);
 % plot(g_G,1:256);
 % plot(g_B,1:256);
-subplot(1,3,1);plot(g_R,1:256,'r');
-subplot(1,3,2);plot(g_G,1:256,'g');
-subplot(1,3,3);plot(g_B,1:256,'b');
+% subplot(1,3,1);plot(g_R,1:256,'r');
+% subplot(1,3,2);plot(g_G,1:256,'g');
+% subplot(1,3,3);plot(g_B,1:256,'b');
 [ HDR_R ] = constructHDR( imgR, deltaT, W, g_R );
 [ HDR_G ] = constructHDR( imgG, deltaT, W, g_G );
 [ HDR_B ] = constructHDR( imgB, deltaT, W, g_B );
@@ -86,3 +86,7 @@ HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
 RGB = tonemap(HDR);
 imshow(RGB);
 imwrite(RGB,'hdr.jpg');
+hdrwrite(HDR,'img.hdr');
+% h=hdrread('img.hdr');
+% imshow(tonemap(h));
+
