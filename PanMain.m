@@ -1,18 +1,24 @@
 clear all;
 %% parameter
-imgNum = 9;
+imgNum = 13;
 % alignment
-levelNum = 5;
+levelNum = 2;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
-shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60];
+shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
 lambda = 20;
 
 %% alignment
 imgSet = cell(1,imgNum);
 for i=1:imgNum
-    imgSet{1,i} = imread(['C:\Users\Toshiba\Documents\GitHub\VFX\testimages\exposures\img0' num2str(i) '.jpg']);
+
+    if i<=9
+        imgSet{1,i} = imread(['C:\Users\Lifeislikeamelody\Pictures\exposures\img0' num2str(i) '.jpg']);
+    else
+        imgSet{1,i} = imread(['C:\Users\Lifeislikeamelody\Pictures\exposures\img' num2str(i) '.jpg']);
+    end
+
 end
 % imgSet 768x1024x3
 
@@ -28,8 +34,8 @@ end
 % end
 
 % align
-[ imgSet_aligned ] = MTBalign( imgSet, imgNum, levelNum, ignoreThreshold );
-imgSet = imgSet_aligned;
+%[ imgSet_aligned ] = MTBalign( imgSet, imgNum, levelNum, ignoreThreshold );
+%imgSet = imgSet_aligned;
 imgHeight = size(imgSet{1,1},1);
 imgWidth = size(imgSet{1,1},2);
 % %test yes align
@@ -81,15 +87,28 @@ HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
 %Tone Mapping
 
 %%Parameter Setting
-a = 0.36;
+a = 0.54;
 %s = 8;
 phi = 8;
-episilon = 0.05;
-level = 8;
+episilon = 1;
+
+for i = 1:size(HDR,1)
+	for j = 1:size(HDR,2)
+		if isnan(HDR(i,j,1))
+			HDR(i,j,1)=0;
+		end
+		if isnan(HDR(i,j,2))
+			HDR(i,j,2)=0;
+		end
+		if isnan(HDR(i,j,3))
+			HDR(i,j,3)=0;
+		end
+	end
+end
 	
 Lw = 0.2126.*HDR(:,:,1)+0.7152.*HDR(:,:,2)+0.0722.*HDR(:,:,3);
 	%Log-average luminance
-delta = 1;
+delta = 0.01;
 LwBar = logaverage(Lw, delta);
 	%Scaled Luminance
 L = Lw*a./LwBar;
@@ -99,13 +118,23 @@ L = Lw*a./LwBar;
 	
 	% 1 1.6 2.56 4.096 6.5536 10.485760 16.777216 26.843546  43
 
-standard = [ 9.9395241,5.872026,3.670016,2.29376,1.4336,0.896,0.56,0.35];
-scale = [43, 27, 17, 10, 7, 4, 3, 2, 1];	
+%standard = [ 15.9024 9.9395241,5.872026,3.670016,2.29376,1.4336,0.896,0.56,0.35];
+%scale = [43, 27, 17, 10, 7, 4, 3, 2, 1];	
+	%standard =[0.35, 0.56, 0.896, 1.4336, 2.29376, 3.670016, 5.872026, 9.9395241, 15.9024];
+	standard = [];
+	init = 1;
+	for i = 1:15
+		init= init*1.2;
+		standard =[standard, init];
+	end
 	
+	%scale = [1, 2, 3,4 ,7, 10, 17,27,43];
+level = size(standard,2);	
 V = {};
 for s=1:level
-  %  H = fspecial('gaussian',43,s-1+eps);
-	H = fspecial('gaussian',scale(s),standard(s));
+    %H = fspecial('gaussian',31,s-1+eps);
+	H = fspecial('gaussian',50,standard(s));
+%	H = fspecial('gaussian',max(size(L,1), size(L,2)),standard(s));
     V{s}= imfilter(L,H,'symmetric');
 end
 
@@ -116,7 +145,7 @@ for i=1:size(L,1)
         for s=1:level-1
 			%Center-surround function
             dis=(V{s}(i,j)-V{s+1}(i,j))/((2^phi)*a/s^2+V{s}(i,j));
-            if abs(dis)<episilon
+            if abs(dis)>episilon
                 scaleMat(i,j)=s;
                 break;
             end
@@ -134,10 +163,21 @@ for i=1:size(L,1)
         Ld(i,j)=L(i,j)/(1+V{scaleMat(i,j)}(i,j));
     end
 end
-
+r=1;
 HDR_tonemapping = zeros(size(L,1),size(L,2),3);
+max1 = max(max(HDR(:,:,1))); max2 = max(max(HDR(:,:,2))); max3 = max(max(HDR(:,:,3)));
+min1 = min(min(HDR(:,:,1))); min2 = min(min(HDR(:,:,2))); min3 = min(min(HDR(:,:,3)));
+
 HDR_tonemapping(:,:,1)=HDR(:,:,1)./Lw.*Ld;
 HDR_tonemapping(:,:,2)=HDR(:,:,2)./Lw.*Ld;
 HDR_tonemapping(:,:,3)=HDR(:,:,3)./Lw.*Ld;
+
+
+%HDR_tonemapping(:,:,1)=round((((HDR(:,:,1)-min1)./(max1-min1)./Lw).*Ld.*max1*255).^r);
+%HDR_tonemapping(:,:,2)=round((((HDR(:,:,2)-min2)./(max2-min2)./Lw).*Ld.*max2*255).^r);
+%HDR_tonemapping(:,:,3)=round((((HDR(:,:,3)-min3)./(max3-min3)./Lw).*Ld.*max3*255).^r);
+
+
 imwrite(HDR_tonemapping,'HDR_tonemapping.bmp');
-figure, imshow(HDR_tonemapping);
+figure, %imshow(uint8(HDR_tonemapping));
+imshow(HDR_tonemapping);
