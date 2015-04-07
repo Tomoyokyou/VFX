@@ -7,7 +7,7 @@ ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
 shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
-lambda = 20;
+lambda = 200;
 
 %% alignment
 imgSet = cell(1,imgNum);
@@ -73,6 +73,9 @@ end
 % plot(g_R,1:256);
 % plot(g_G,1:256);
 % plot(g_B,1:256);
+subplot(1,3,1);plot(g_R,1:256,'r');
+subplot(1,3,2);plot(g_G,1:256,'g');
+subplot(1,3,3);plot(g_B,1:256,'b');
 [ HDR_R ] = constructHDR( imgR, deltaT, W, g_R );
 [ HDR_G ] = constructHDR( imgG, deltaT, W, g_G );
 [ HDR_B ] = constructHDR( imgB, deltaT, W, g_B );
