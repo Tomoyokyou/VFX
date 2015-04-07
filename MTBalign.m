@@ -17,10 +17,11 @@ end
 % imshow(reshape(imgMTB(:,1),size(imgSet{1,i},1),size(imgSet{1,i},2)));
 % imshow(reshape(imgMTB_mask(:,1),size(imgSet{1,i},1),size(imgSet{1,i},2)));
 cropCoordinate = zeros(4,imgNum);
+stdImg = fix(imgNum/2);
 for i=1:imgNum
-    imgY1 = reshape(imgY(:,1),size(imgSet{1,i},1),size(imgSet{1,i},2));
-    imgMTB1 = reshape(imgMTB(:,1),size(imgSet{1,i},1),size(imgSet{1,i},2));
-    imgMTB_mask1 = reshape(imgMTB_mask(:,1),size(imgSet{1,i},1),size(imgSet{1,i},2));
+    imgY1 = reshape(imgY(:,stdImg),size(imgSet{1,i},1),size(imgSet{1,i},2));
+    imgMTB1 = reshape(imgMTB(:,stdImg),size(imgSet{1,i},1),size(imgSet{1,i},2));
+    imgMTB_mask1 = reshape(imgMTB_mask(:,stdImg),size(imgSet{1,i},1),size(imgSet{1,i},2));
     imgY2 = reshape(imgY(:,i),size(imgSet{1,i},1),size(imgSet{1,i},2));
     imgMTB2 = reshape(imgMTB(:,i),size(imgSet{1,i},1),size(imgSet{1,i},2));
     imgMTB_mask2 = reshape(imgMTB_mask(:,i),size(imgSet{1,i},1),size(imgSet{1,i},2));

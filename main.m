@@ -2,8 +2,8 @@ clear all;
 %% parameter
 imgNum = 12;
 % alignment
-levelNum = 0;
-ignoreThreshold = 5;
+levelNum = 3;
+ignoreThreshold = 20;
 % HDR
 sampleNum = 100;
 shutterTime = [1/3200 1/1600 1/800 1/400 1/200 1/100 1/50 1/25 1/15 1/13 1/8 1/5];
@@ -86,8 +86,7 @@ HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
 RGB = tonemap(HDR);
 imshow(RGB);
 imwrite(RGB,'hdr.jpg');
-RGBE = zeros(size(HDR_R,1),size(HDR_R,2),3);
-RGBE(:,:,1) = HDR_R;
-RGBE(:,:,2) = HDR_G;
-RGBE(:,:,3) = HDR_B;
-hdrwrite(RGBE,'img.hdr');
+hdrwrite(HDR,'img.hdr');
+% h=hdrread('img.hdr');
+% imshow(tonemap(h));
+
