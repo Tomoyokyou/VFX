@@ -1,25 +1,28 @@
 clear all;
 %% parameter
-imgNum = 13;
+
 % alignment
 levelNum = 2;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
-shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
-lambda = 20;
+shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
+lambda = 200;
 
-%% alignment
+path = 'C:\Users\Lifeislikeamelody\Pictures\Dahu\data_set_1';
+list = dir([path '\*.JPG']);
+imgNum = size(list,1);
 imgSet = cell(1,imgNum);
+
 for i=1:imgNum
 
-    if i<=9
-        imgSet{1,i} = imread(['C:\Users\Lifeislikeamelody\Pictures\exposures\img0' num2str(i) '.jpg']);
-    else
-        imgSet{1,i} = imread(['C:\Users\Lifeislikeamelody\Pictures\exposures\img' num2str(i) '.jpg']);
-    end
+        imgSet{1,i} = imread([path '\' list(i).name]);
+        imgSet{1,i} = imresize(imgSet{1,i},0.2);
 
 end
+%% alignment
+
+
 % imgSet 768x1024x3
 
 % % misalign
@@ -87,9 +90,9 @@ HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
 %Tone Mapping
 
 %%Parameter Setting
-a = 0.54;
+a = 0.72;
 %s = 8;
-phi = 8;
+phi = 20;
 episilon = 1;
 
 for i = 1:size(HDR,1)
@@ -123,7 +126,7 @@ L = Lw*a./LwBar;
 	%standard =[0.35, 0.56, 0.896, 1.4336, 2.29376, 3.670016, 5.872026, 9.9395241, 15.9024];
 	standard = [];
 	init = 1;
-	for i = 1:15
+	for i = 1:30
 		init= init*1.2;
 		standard =[standard, init];
 	end
@@ -133,7 +136,7 @@ level = size(standard,2);
 V = {};
 for s=1:level
     %H = fspecial('gaussian',31,s-1+eps);
-	H = fspecial('gaussian',50,standard(s));
+	H = fspecial('gaussian',500,standard(s));
 %	H = fspecial('gaussian',max(size(L,1), size(L,2)),standard(s));
     V{s}= imfilter(L,H,'symmetric');
 end
@@ -178,6 +181,6 @@ HDR_tonemapping(:,:,3)=HDR(:,:,3)./Lw.*Ld;
 %HDR_tonemapping(:,:,3)=round((((HDR(:,:,3)-min3)./(max3-min3)./Lw).*Ld.*max3*255).^r);
 
 
-imwrite(HDR_tonemapping,'HDR_tonemapping.bmp');
+imwrite(HDR_tonemapping,'HDR_tonemapping.jpg');
 figure, %imshow(uint8(HDR_tonemapping));
 imshow(HDR_tonemapping);
