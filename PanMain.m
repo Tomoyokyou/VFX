@@ -1,27 +1,29 @@
 clear all;
 %% parameter
-imgNum = 13;
+imgNum = 16;
 % alignment
 levelNum = 2;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
 %shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
-shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
+shutterTime = [1/0.03125 1/0.0625 1/0.125 1/0.25 1/0.5 1 1/2 1/4 1/8 1/16 1/32 1/64 1/128 1/256 1/512 1/1024];
+
+%shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
 
 lambda = 20;
-path = 'C:\Users\Toshiba\Pictures\Dahu\data_set_1\';
+%path = 'C:\Users\Toshiba\Pictures\Dahu\data_set_1\';
 
 %%Load Image
 
-imgSet = dir([path '*.jpg']);
-%imgSet = cell(1,imgNum);
+%imgSet = dir([path '*.jpg']);
+imgSet = cell(1,imgNum);
 for i=1:imgNum
 
     if i<=9
-        imgSet{1,i} = imread(['C:\Users\Lifeislikeamelody\Pictures\exposures\img0' num2str(i) '.jpg']);
+        imgSet{1,i} = imread(['C:\Users\Toshiba\Documents\GitHub\VFX\Memorial_SourceImages\memorial00' num2str(i+60) '.png']);
     else
-        imgSet{1,i} = imread(['C:\Users\Lifeislikeamelody\Pictures\exposures\img' num2str(i) '.jpg']);
+           imgSet{1,i} = imread(['C:\Users\Toshiba\Documents\GitHub\VFX\Memorial_SourceImages\memorial00' num2str(i+60) '.png']);
     end
 
 end
@@ -94,10 +96,10 @@ HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
 %Tone Mapping
 
 %%Parameter Setting
-a = 0.54;
+a = 0.72;
 %s = 8;
 phi = 8;
-episilon = 1;
+episilon = 0.01;
 
 for i = 1:size(HDR,1)
 	for j = 1:size(HDR,2)
@@ -140,7 +142,7 @@ level = size(standard,2);
 V = {};
 for s=1:level
     %H = fspecial('gaussian',31,s-1+eps);
-	H = fspecial('gaussian',50,standard(s));
+	H = fspecial('gaussian',150,standard(s));
 %	H = fspecial('gaussian',max(size(L,1), size(L,2)),standard(s));
     V{s}= imfilter(L,H,'symmetric');
 end
@@ -185,6 +187,6 @@ HDR_tonemapping(:,:,3)=HDR(:,:,3)./Lw.*Ld;
 %HDR_tonemapping(:,:,3)=round((((HDR(:,:,3)-min3)./(max3-min3)./Lw).*Ld.*max3*255).^r);
 
 
-imwrite(HDR_tonemapping,'HDR_tonemapping.bmp');
+imwrite(HDR_tonemapping,'HDR_tonemapping.jpg');
 figure, %imshow(uint8(HDR_tonemapping));
 imshow(HDR_tonemapping);
