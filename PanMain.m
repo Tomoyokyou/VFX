@@ -1,33 +1,34 @@
 clear all;
 %% parameter
-imgNum = 16;
+
 % alignment
 levelNum = 2;
 ignoreThreshold = 5;
 % HDR
 sampleNum = 100;
-%shutterTime = [13 10 7 3.2 1 0.8 1/3 1/4 1/60 1/80 1/320 1/400 1/1000];
-shutterTime = [1/0.03125 1/0.0625 1/0.125 1/0.25 1/0.5 1 1/2 1/4 1/8 1/16 1/32 1/64 1/128 1/256 1/512 1/1024];
+Toshiba\Pictures\Dahu\data_set_1\';
 
-%shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
 
-lambda = 20;
-%path = 'C:\Users\Toshiba\Pictures\Dahu\data_set_1\';
+shutterTime = [1/3200 1/1600 1/800 1/320 1/400 1/200 1/100 1/50 1/25 1/13 1/6 1/3 1/2 1];
+lambda = 200;
 
-%%Load Image
-
-%imgSet = dir([path '*.jpg']);
+path = 'C:\Users\Lifeislikeamelody\Pictures\Dahu\data_set_1';
+list = dir([path '\*.JPG']);
+imgNum = size(list,1);
 imgSet = cell(1,imgNum);
+
+
+
+
 for i=1:imgNum
 
-    if i<=9
-        imgSet{1,i} = imread(['C:\Users\Toshiba\Documents\GitHub\VFX\Memorial_SourceImages\memorial00' num2str(i+60) '.png']);
-    else
-           imgSet{1,i} = imread(['C:\Users\Toshiba\Documents\GitHub\VFX\Memorial_SourceImages\memorial00' num2str(i+60) '.png']);
-    end
+        imgSet{1,i} = imread([path '\' list(i).name]);
+        imgSet{1,i} = imresize(imgSet{1,i},0.2);
+>>>>>>> fecd110fd7b9a3637ef5910b9d5c5a151ec0c1b7
 
 end
 %% alignment
+
 
 % imgSet 768x1024x3
 
@@ -98,8 +99,10 @@ HDR(:,:,3) = reshape(HDR_B,imgHeight,imgWidth);
 %%Parameter Setting
 a = 0.72;
 %s = 8;
-phi = 8;
-episilon = 0.01;
+
+phi = 20;
+episilon = 1;
+
 
 for i = 1:size(HDR,1)
 	for j = 1:size(HDR,2)
@@ -132,7 +135,7 @@ L = Lw*a./LwBar;
 	%standard =[0.35, 0.56, 0.896, 1.4336, 2.29376, 3.670016, 5.872026, 9.9395241, 15.9024];
 	standard = [];
 	init = 1;
-	for i = 1:15
+	for i = 1:30
 		init= init*1.2;
 		standard =[standard, init];
 	end
@@ -142,7 +145,9 @@ level = size(standard,2);
 V = {};
 for s=1:level
     %H = fspecial('gaussian',31,s-1+eps);
+
 	H = fspecial('gaussian',150,standard(s));
+
 %	H = fspecial('gaussian',max(size(L,1), size(L,2)),standard(s));
     V{s}= imfilter(L,H,'symmetric');
 end
